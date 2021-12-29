@@ -1,5 +1,6 @@
 /**
  *  Numerical Analysis. Exercise 02.
+ *  By kento
  */
 public class ex02 {
     public static void main(String[] args) {
