@@ -25,7 +25,13 @@ public class ex06 {
       + " Error = " + String.format("%.6f", calc.Error_b(x, h)));
     }
     System.out.println("\n");
-    System.out.println("Trape " + calc.Trape(24));
+    System.out.println("Numerical integration");
+    System.out.println("I = Integral(1/(x^2+1)), limits: [0,1]");
+    System.out.println("\n");
+    System.out.println("Trapezoidal rule, nsub = 24");
+    System.out.println("I = " + String.format("%.12f", calc.Trape(24))
+    + " Error = " + String.format("%.4e", calc.Error_t(24))
+    + " R = " + String.format("%.2e", calc.Relative_E(24) * 100) + " %");
   }
 }
 
@@ -44,19 +50,32 @@ class Calculate {
   double Error_b(double x, double h) {
     return Derivative_b(x,h) - Math.cos(x);
   }
-  // double plus_sub(double x){
-  //   return
-  // }
-  double Trape(int n){
-    double sub = 1 / n, x1 = 0, x2 = 0, ans = 0, T;
+
+  double Trape(double n){
+    Func func = new Func();
+    double sub = 1 / n, x1 = 0, x2 = 0, ans = 0, saveF = 0;
     for (int i = 0; i < n; i++) {
-      x1 = (x1 / 180) * Math.PI;
-      x2 = ((x1 + sub) / 180) * Math.PI;
-      T = ((Math.atan(x1) + Math.atan(x2)) * sub) / 2;
-      ans = ans + T;
+      x2 = x1 + sub;
+      ans = ((func.F(x1) + func.F(x2)) * sub / 2) + ans;
       x1 = x1 + sub;
     }
     return ans;
   }
 
+  double Error_t(double n) {
+    return  Math.atan(1) - Trape(n);
+  }
+
+  double Relative_E(double n) {
+    return  (Trape(n) - Math.atan(1))/ Math.atan(1);
+  }
+
+
+}
+
+class Func{
+  double F(double x) {
+    double x2t1 = x * x + 1;
+    return 1 / x2t1;
+  }
 }
