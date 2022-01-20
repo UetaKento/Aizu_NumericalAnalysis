@@ -1,4 +1,4 @@
-public class ex06 {
+public class ex08 {
   public static void main(String[] args) {
     Calculate calc = new Calculate();
     double x, print_x;
