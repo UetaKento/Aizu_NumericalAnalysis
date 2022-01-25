@@ -41,6 +41,7 @@ public class ex11 {
     }
     int h = 3;
     System.out.println("Thus h = " + h);
+
     double[] A = new double[h * n];
     for (int i = 0; i < n; i++) {
       for (int j = 1; j <= h; j++) {
@@ -73,6 +74,25 @@ public class ex11 {
     band.solve(A, n, h, B);
     for (int i = 0; i < n; i++){
       System.out.println(" x[" + i + "] = " + String.format("%.4f", B[i]));
+    }
+
+
+    List<double> listA = new ArrayList<double>();
+    int[] arrayh = new int[6];
+    arrayh[0] = 1;
+    arrayh[1] = 2;
+    arrayh[2] = 3;
+    arrayh[3] = 3;
+    arrayh[4] = 1;
+    arrayh[5] = 2;
+    for (int i = 0; i < n; i++) {
+      for (int j = 1; j <= arrayh[]; j++) {
+        if (i + 1 - j < 0) {
+          A[(h * (i + 1)) - j] = 0;
+          continue;
+        }
+        A[(h * (i + 1)) - j] = matrix[i + 1 - j][i];
+      }
     }
   }
 }
