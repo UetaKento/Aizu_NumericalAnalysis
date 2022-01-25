@@ -1,3 +1,4 @@
+import java.lang.Object;
 public class ex11 {
   public static void main(String[] args){
     System.out.println("Matrix is");
@@ -57,6 +58,21 @@ public class ex11 {
       }
       System.out.println(" A[" + i + "] = " + A[i]);
     }
+    System.out.println("");
 
+    double[] B = new double[6];
+    B[0] = -2;
+    B[1] = -5;
+    B[2] = 4;
+    B[3] = 1;
+    B[4] = -7;
+    B[5] = -4;
+
+    LUband band = new LUband();
+    band.decompose(A, n, h);
+    band.solve(A, n, h, B);
+    for (int i = 0; i < n; i++){
+      System.out.println(" x[" + i + "] = " + String.format("%.4f", B[i]));
+    }
   }
 }
