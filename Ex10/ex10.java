@@ -7,65 +7,109 @@ public class ex10 {
 
     ex10 e = new ex10();
     e.Liebman(0.1);
-    // e.SOR(0.1);
-    // e.Liebman(0.05);
-    // e.SOR(0.05);
+    e.SOR(0.1);
+    e.Liebman(0.05);
+    e.SOR(0.05);
 
   }
 
   void Liebman (double h) {
-    int iter = 0;
-    double dn = edge / h;
-    int n = (int)dn;
-    double[][] grid = new double[n][n];
-    double[][] before_grid = new double[n][n];
-    double k = 0, kt1, e = 1.0e-10, abs = 1;
+    double dn = edge / h; // double型で計算して
+    int n = (int)dn; // intにcast
+    double[][] grid = new double[n + 1][n + 1]; // 縦横をn等分した時にできるグリッドの点は(n+1)*(n+1)個。これはu(k+1)の役割。
+    double[][] before_grid = new double[n + 1][n + 1]; // これはu(k)の役割。
+    double e = 1.0e-10, abs = 1;
+    int flags = 0, iter = 0; // |u(k+1)-u(k)/u(k+1)|<eの時にflagsを追加。iterはループ回数。
+    // 初期化
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
-        grid[i][j] = 0;
+        before_grid[i][j] = 0;
       }
     }
 
-    while(abs > e){
-      for (int i = 1; i < n - 1; i++) {
-        for (int j = 1; j < n - 1; j++) {
-          grid[i][j] = (grid[i+1][j] + grid[i-1][j] + grid[i][j+1] + grid[i][j-1] + 2 * Math.pow(h, 2)) / 4;
+    while(flags != (n - 1) * (n - 1)){ // 縦横をn等分した時にできる境界線以外のグリッドの点は(n-1)*(n-1)。全ての点で前回の値との差がほぼ無くなったら終了。
+      flags = 0;
+      iter++;
+      for (int i = 1; i < n; i++) {
+        for (int j = 1; j < n; j++) {
+          grid[i][j] = (before_grid[i+1][j] + grid[i-1][j] + before_grid[i][j+1] + grid[i][j-1] + 2 * Math.pow(h, 2)) / 4;
+          abs = grid[i][j] - before_grid[i][j];
+          abs = abs / grid[i][j];
+          abs = Math.abs(abs);
+          if (abs < e) {
+            flags++;
+          }
+          before_grid[i][j] = grid[i][j];
         }
       }
-      kt1 = grid[n - 2][n - 2];
-      abs = kt1 - k;
-      abs = abs / kt1;
-      abs = Math.abs(abs);
-      System.out.println("abs = " + abs);
-      k = kt1;
     }
 
-    //初期化
-    // for (int i = 0; i < n + 2; i++) {
-    //   grid[i][0] = 0;
-    //   grid[i][n + 1] = 0;
-    //   if (i == 0 || i == n + 1) {
-    //     for (int j = 0; j < n + 2; j++) {
-    //       grid[i][j] = 0;
-    //     }
+    // for (int i = 0; i < n + 1; i++) {
+    //   for (int j = 0; j < n + 1; j++) {
+    //     System.out.print(" " + String.format("%6.5f", grid[i][j]) + " ");
     //   }
+    //   System.out.println("");
     // }
+
     System.out.println("Liebman method");
     System.out.println("n = " + n + " h = " + String.format("%.3f", h));
-
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        System.out.print(" " + String.format("%6.5f", grid[i][j]) + " ");
-      }
-      System.out.println("");
+    System.out.println("iter = " + iter);
+    double x = 0;
+    for (int i = 0; i < n + 1; i++) {
+      System.out.println("x = " + String.format("%4.2f", x) + " u = " + String.format("%7.5f", grid[i][n / 2]) + " ");
+      x = x + h;
     }
-
+    System.out.println();
   }
 
   void SOR (double h) {
     double overfac = 1.6;
-    int iter = 0;
+    double dn = edge / h;
+    int n = (int)dn;
+    double[][] grid = new double[n + 1][n + 1];
+    double[][] before_grid = new double[n + 1][n + 1];
+    double e = 1.0e-10, abs = 1;
+    int flags = 0, iter = 0;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        before_grid[i][j] = 0;
+      }
+    }
+
+    while(flags != (n - 1) * (n - 1)){
+      flags = 0;
+      iter++;
+      for (int i = 1; i < n; i++) {
+        for (int j = 1; j < n; j++) {
+          grid[i][j] = (before_grid[i+1][j] + grid[i-1][j] + before_grid[i][j+1] + grid[i][j-1] - 4 * before_grid[i][j] + 2 * Math.pow(h, 2)) / 4;
+          grid[i][j] = overfac * grid[i][j];
+          grid[i][j] = before_grid[i][j] + grid[i][j];
+          abs = grid[i][j] - before_grid[i][j];
+          abs = abs / grid[i][j];
+          abs = Math.abs(abs);
+          if (abs < e) {
+            flags++;
+          }
+          before_grid[i][j] = grid[i][j];
+        }
+      }
+    }
+
+    // for (int i = 0; i < n + 1; i++) {
+    //   for (int j = 0; j < n + 1; j++) {
+    //     System.out.print(" " + String.format("%6.5f", grid[i][j]) + " ");
+    //   }
+    //   System.out.println("");
+    // }
+
     System.out.println("SOR method, overrelaxation factor = " + overfac);
-    System.out.println("n = " + edge / h + " h = " + String.format("%.3f", h));
+    System.out.println("n = " + n + " h = " + String.format("%.3f", h));
+    System.out.println("iter = " + iter);
+    double x = 0;
+    for (int i = 0; i < n + 1; i++) {
+      System.out.println("x = " + String.format("%4.2f", x) + " u = " + String.format("%7.5f", grid[i][n / 2]) + " ");
+      x = x + h;
+    }
+    System.out.println();
   }
 }
